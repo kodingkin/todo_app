@@ -1,14 +1,17 @@
-"use client"
+"use client";
+
+import { Button, Form, Input, Checkbox, Link } from "@heroui/react";
+import { FormEvent, useState } from "react";
 
 import { title } from "@/components/primitives";
-import { Button,Form, Input, Select, SelectItem, Checkbox, Link} from "@heroui/react";
-import { FormEvent, useState } from "react";
 
 export default function DocsPage() {
   const [password, setPassword] = useState("");
   const [confirmPassword, setConfirmPassword] = useState("");
   const [submitted, setSubmitted] = useState<FormDataType | null>(null);
-  const [errors, setErrors] = useState<Partial<Record<keyof FormDataType, string>>>({});
+  const [errors, setErrors] = useState<
+    Partial<Record<keyof FormDataType, string>>
+  >({});
 
   // Real-time password validation
   const getPasswordError = (value: string) => {
@@ -36,12 +39,13 @@ export default function DocsPage() {
     terms: string;
   }
 
-const onSubmit = (e: FormEvent<HTMLFormElement>) => {
+  const onSubmit = (e: FormEvent<HTMLFormElement>) => {
     e.preventDefault();
     const formData = new FormData(e.currentTarget);
 
     const getString = (key: string): string => {
       const value = formData.get(key);
+
       return typeof value === "string" ? value : "";
     };
 
@@ -68,7 +72,7 @@ const onSubmit = (e: FormEvent<HTMLFormElement>) => {
     }
 
     if (data.password !== data.confirmPassword) {
-      newErrors.confirmPassword = "Seems you enter different password here"
+      newErrors.confirmPassword = "Seems you enter different password here";
     }
 
     if (Object.keys(newErrors).length > 0) {
@@ -78,7 +82,7 @@ const onSubmit = (e: FormEvent<HTMLFormElement>) => {
     }
 
     if (data.terms !== "true") {
-      setErrors({terms: "Please accept the terms"});
+      setErrors({ terms: "Please accept the terms" });
 
       return;
     }
@@ -90,7 +94,7 @@ const onSubmit = (e: FormEvent<HTMLFormElement>) => {
 
   return (
     <div className="flex flex-col gap-12">
-      <div className={title({size: "sm"})}>Welcome</div>
+      <div className={title({ size: "sm" })}>Welcome</div>
       <Form
         className="w-full justify-center items-center space-y-4"
         validationErrors={errors}
@@ -100,7 +104,7 @@ const onSubmit = (e: FormEvent<HTMLFormElement>) => {
         <div className="flex flex-col gap-4 max-w-md">
           <Input
             isRequired
-            errorMessage={({validationDetails}) => {
+            errorMessage={({ validationDetails }) => {
               if (validationDetails.valueMissing) {
                 return "Please enter your name";
               }
@@ -115,7 +119,7 @@ const onSubmit = (e: FormEvent<HTMLFormElement>) => {
 
           <Input
             isRequired
-            errorMessage={({validationDetails}) => {
+            errorMessage={({ validationDetails }) => {
               if (validationDetails.valueMissing) {
                 return "Please enter your email";
               }
@@ -155,31 +159,35 @@ const onSubmit = (e: FormEvent<HTMLFormElement>) => {
             value={confirmPassword}
             onValueChange={setConfirmPassword}
           />
-            <div className="flex gap-1">
-                <Checkbox
-                    isRequired
-                    classNames={{
-                    label: "text-small",
-                    }}
-                    isInvalid={!!errors.terms}
-                    name="terms"
-                    validationBehavior="aria"
-                    value="true"
-                    onValueChange={() => setErrors((prev) => ({...prev, terms: undefined}))}
-                >
-                    <span className="text-default-600">I agree to the </span>
-                </Checkbox>
-                    <Link
-                        isExternal
-                        className="flex items-center gap-1 text-small"
-                        href="https://www.youtube.com/watch?v=dQw4w9WgXcQ"
-                        title="Terms and conditions"
-                    >
-                        <span className="text-blue-400">terms and conditions</span>
-                    </Link>
-            </div>
+          <div className="flex gap-1">
+            <Checkbox
+              isRequired
+              classNames={{
+                label: "text-small",
+              }}
+              isInvalid={!!errors.terms}
+              name="terms"
+              validationBehavior="aria"
+              value="true"
+              onValueChange={() =>
+                setErrors((prev) => ({ ...prev, terms: undefined }))
+              }
+            >
+              <span className="text-default-600">I agree to the </span>
+            </Checkbox>
+            <Link
+              isExternal
+              className="flex items-center gap-1 text-small"
+              href="https://www.youtube.com/watch?v=dQw4w9WgXcQ"
+              title="Terms and conditions"
+            >
+              <span className="text-blue-400">terms and conditions</span>
+            </Link>
+          </div>
 
-          {errors.terms && <span className="text-danger text-small">{errors.terms}</span>}
+          {errors.terms && (
+            <span className="text-danger text-small">{errors.terms}</span>
+          )}
 
           <div className="flex gap-4">
             <Button className="w-full" color="primary" type="submit">

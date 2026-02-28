@@ -57,6 +57,6 @@ export const siteConfig = {
     docs: "https://heroui.com",
     discord: "https://discord.gg/9b6yyZKmH4",
     signUp: "/sign-up",
-    login: "/login"
+    login: "/login",
   },
 };

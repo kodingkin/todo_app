@@ -1,13 +1,16 @@
-"use client"
+"use client";
+
+import { Button, Form, Input } from "@heroui/react";
+import { FormEvent, useState } from "react";
 
 import { title } from "@/components/primitives";
-import { Button,Form, Input, Select, SelectItem, Checkbox} from "@heroui/react";
-import { FormEvent, useState } from "react";
 
 export default function DocsPage() {
   const [password, setPassword] = useState("");
   const [submitted, setSubmitted] = useState<FormDataType | null>(null);
-  const [errors, setErrors] = useState<Partial<Record<keyof FormDataType, string>>>({});
+  const [errors, setErrors] = useState<
+    Partial<Record<keyof FormDataType, string>>
+  >({});
 
   // Real-time password validation
   const getPasswordError = (value: string) => {
@@ -23,12 +26,13 @@ export default function DocsPage() {
     password: string;
   }
 
-const onSubmit = (e: FormEvent<HTMLFormElement>) => {
+  const onSubmit = (e: FormEvent<HTMLFormElement>) => {
     e.preventDefault();
     const formData = new FormData(e.currentTarget);
 
     const getString = (key: string): string => {
       const value = formData.get(key);
+
       return typeof value === "string" ? value : "";
     };
 
@@ -59,7 +63,7 @@ const onSubmit = (e: FormEvent<HTMLFormElement>) => {
 
   return (
     <div className="flex flex-col gap-12">
-      <div className={title({size: "sm"})}>Welcome back</div>
+      <div className={title({ size: "sm" })}>Welcome back</div>
       <Form
         className="w-full justify-center items-center space-y-4"
         validationErrors={errors}
@@ -67,10 +71,9 @@ const onSubmit = (e: FormEvent<HTMLFormElement>) => {
         onSubmit={onSubmit}
       >
         <div className="flex flex-col gap-4 max-w-md">
-
           <Input
             isRequired
-            errorMessage={({validationDetails}) => {
+            errorMessage={({ validationDetails }) => {
               if (validationDetails.valueMissing) {
                 return "Please enter your email";
               }
