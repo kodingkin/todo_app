@@ -94,7 +94,7 @@ export default function DocsPage() {
 
   return (
     <div className="flex flex-col gap-12">
-      <div className={title({ size: "sm" })}>Welcome</div>
+      <div className={title({ size: "sm", color: "blue" })}>Welcome</div>
       <Form
         className="w-full justify-center items-center space-y-4"
         validationErrors={errors}
