@@ -12,16 +12,6 @@ export default function DocsPage() {
     Partial<Record<keyof FormDataType, string>>
   >({});
 
-  // Real-time password validation
-  const getPasswordError = (value: string) => {
-    if (!value) return null;
-    if (value.length < 4) {
-      return "Password must be 4 characters or more";
-    }
-
-    return null;
-  };
-
   interface FormDataType {
     password: string;
   }
@@ -42,13 +32,6 @@ export default function DocsPage() {
 
     // Custom validation checks
     const newErrors: Partial<Record<keyof FormDataType, string>> = {};
-
-    // Password validation
-    const passwordError = getPasswordError(data.password);
-
-    if (passwordError) {
-      newErrors.password = passwordError;
-    }
 
     if (Object.keys(newErrors).length > 0) {
       setErrors(newErrors);
@@ -90,8 +73,11 @@ export default function DocsPage() {
 
           <Input
             isRequired
-            errorMessage={getPasswordError(password)}
-            isInvalid={getPasswordError(password) !== null}
+            errorMessage={({ validationDetails }) => {
+              if (validationDetails.valueMissing) {
+                return "Please enter your password";
+              }
+            }}
             label="Password"
             labelPlacement="outside"
             name="password"

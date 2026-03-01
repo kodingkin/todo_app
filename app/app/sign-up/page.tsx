@@ -13,25 +13,6 @@ export default function DocsPage() {
     Partial<Record<keyof FormDataType, string>>
   >({});
 
-  // Real-time password validation
-  const getPasswordError = (value: string) => {
-    if (!value) return null;
-    if (value.length < 4) {
-      return "Password must be 4 characters or more";
-    }
-
-    return null;
-  };
-
-  const getConfirmPasswordError = (value: string) => {
-    if (!password) return null;
-    if (value !== password) {
-      return "Seems you enter different password here";
-    }
-
-    return null;
-  };
-
   interface FormDataType {
     name: string;
     password: string;
@@ -58,13 +39,6 @@ export default function DocsPage() {
 
     // Custom validation checks
     const newErrors: Partial<Record<keyof FormDataType, string>> = {};
-
-    // Password validation
-    const passwordError = getPasswordError(data.password);
-
-    if (passwordError) {
-      newErrors.password = passwordError;
-    }
 
     // Username validation
     if (data.name === "admin") {
@@ -136,11 +110,19 @@ export default function DocsPage() {
 
           <Input
             isRequired
-            errorMessage={getPasswordError(password)}
-            isInvalid={getPasswordError(password) !== null}
+            errorMessage={({ validationDetails }) => {
+              if (validationDetails.valueMissing) {
+                return "Please enter your password";
+              }
+              if (validationDetails.tooShort) {
+                return "Password must be 8 characters or more";
+              }
+              return errors.password;
+            }}
             label="Password"
             labelPlacement="outside"
             name="password"
+            minLength={8}
             placeholder="Enter your password"
             type="password"
             value={password}
@@ -149,8 +131,12 @@ export default function DocsPage() {
 
           <Input
             isRequired
-            errorMessage={getConfirmPasswordError(confirmPassword)}
-            isInvalid={getConfirmPasswordError(confirmPassword) !== null}
+            errorMessage={({ validationDetails }) => {
+              if (validationDetails.valueMissing) {
+                return "Please enter your password again";
+              }
+              return errors.confirmPassword;
+            }}
             label="Confirm Password"
             labelPlacement="outside"
             name="confirmPassword"
