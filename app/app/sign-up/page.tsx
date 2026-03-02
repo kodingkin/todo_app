@@ -4,6 +4,7 @@ import { Button, Form, Input, Checkbox, Link } from "@heroui/react";
 import { FormEvent, useState } from "react";
 
 import { title } from "@/components/primitives";
+import { createUser, FormDataType } from "@/lib/serverFunctions";
 
 export default function DocsPage() {
   const [password, setPassword] = useState("");
@@ -13,14 +14,18 @@ export default function DocsPage() {
     Partial<Record<keyof FormDataType, string>>
   >({});
 
-  interface FormDataType {
-    name: string;
-    password: string;
-    confirmPassword: string;
-    terms: string;
+  const formChecking = (data: FormDataType) => {
+      const newErrors: Partial<Record<keyof FormDataType, string>> = {};
+      if (data.password !== data.confirmPassword) {
+        newErrors.confirmPassword = "Seems you enter different password here";
+      }
+      if (data.terms !== "true") {
+        newErrors.terms = "Please accept the terms"
+      }
+      return newErrors;
   }
 
-  const onSubmit = (e: FormEvent<HTMLFormElement>) => {
+  const onSubmit = async (e: FormEvent<HTMLFormElement>) => {
     e.preventDefault();
     const formData = new FormData(e.currentTarget);
 
@@ -37,17 +42,7 @@ export default function DocsPage() {
       terms: getString("terms"),
     };
 
-    // Custom validation checks
-    const newErrors: Partial<Record<keyof FormDataType, string>> = {};
-
-    // Username validation
-    if (data.name === "admin") {
-      newErrors.name = "Nice try! Choose a different username";
-    }
-
-    if (data.password !== data.confirmPassword) {
-      newErrors.confirmPassword = "Seems you enter different password here";
-    }
+    const newErrors = formChecking(data);
 
     if (Object.keys(newErrors).length > 0) {
       setErrors(newErrors);
@@ -55,15 +50,7 @@ export default function DocsPage() {
       return;
     }
 
-    if (data.terms !== "true") {
-      setErrors({ terms: "Please accept the terms" });
-
-      return;
-    }
-
-    // Clear errors and submit
-    setErrors({});
-    setSubmitted(data);
+    await createUser(formData);
   };
 
   return (
@@ -184,12 +171,6 @@ export default function DocsPage() {
             </Button>
           </div>
         </div>
-
-        {submitted && (
-          <div className="text-small text-default-500 mt-4">
-            Submitted data: <pre>{JSON.stringify(submitted, null, 2)}</pre>
-          </div>
-        )}
       </Form>
     </div>
   );

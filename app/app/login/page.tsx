@@ -4,6 +4,7 @@ import { Button, Form, Input } from "@heroui/react";
 import { FormEvent, useState } from "react";
 
 import { title } from "@/components/primitives";
+import { login } from "@/lib/serverFunctions";
 
 export default function DocsPage() {
   const [password, setPassword] = useState("");
@@ -20,28 +21,9 @@ export default function DocsPage() {
     e.preventDefault();
     const formData = new FormData(e.currentTarget);
 
-    const getString = (key: string): string => {
-      const value = formData.get(key);
-
-      return typeof value === "string" ? value : "";
-    };
-
-    const data: FormDataType = {
-      password: getString("password"),
-    };
-
-    // Custom validation checks
-    const newErrors: Partial<Record<keyof FormDataType, string>> = {};
-
-    if (Object.keys(newErrors).length > 0) {
-      setErrors(newErrors);
-
-      return;
-    }
-
     // Clear errors and submit
     setErrors({});
-    setSubmitted(data);
+    login(formData);
   };
 
   return (
@@ -96,12 +78,6 @@ export default function DocsPage() {
             </Button>
           </div>
         </div>
-
-        {submitted && (
-          <div className="text-small text-default-500 mt-4">
-            Submitted data: <pre>{JSON.stringify(submitted, null, 2)}</pre>
-          </div>
-        )}
       </Form>
     </div>
   );
