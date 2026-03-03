@@ -1,7 +1,7 @@
 "use client";
 
-import { Form, Input, Button, Checkbox } from "@heroui/react";
-import { useState, useEffect, use, FormEvent } from "react";
+import { Card, CardBody, Form, Input, Button, Checkbox } from "@heroui/react";
+import { useState, useEffect, use, FormEvent, useRef } from "react";
 import clsx from "clsx";
 
 import {
@@ -20,6 +20,7 @@ interface Props {
 export default function TodosPage({ params }: Props) {
   const userId = use(params).id;
   const [todos, setTodos] = useState<any[]>([]);
+  const formRef = useRef<HTMLFormElement>(null);
 
   useEffect(() => {
     findTodo(userId).then(setTodos);
@@ -31,6 +32,9 @@ export default function TodosPage({ params }: Props) {
 
     try {
       await createTodo(formData);
+      if (formRef.current) {
+        formRef.current.reset();
+      }
       const updated = await findTodo(userId);
 
       setTodos(updated);
@@ -61,10 +65,13 @@ export default function TodosPage({ params }: Props) {
     <div className="w-full mx-auto py-12 px-4">
       <h1 className={title({ size: "sm" })}>My Todos</h1>
 
-      <Form className="flex gap-3 flex-row my-12" onSubmit={handleCreate}>
+      <Form
+        ref={formRef}
+        className="flex gap-3 flex-row my-12"
+        onSubmit={handleCreate}
+      >
         <input name="userId" type="hidden" value={userId} />
         <Input
-          isRequired
           className="flex-1"
           name="title"
           placeholder="What needs to be done?"
@@ -76,59 +83,56 @@ export default function TodosPage({ params }: Props) {
 
       <ul className="space-y-4">
         {todos.map((todo) => (
-          <li
+          <Card
             key={todo.id}
-            className="
-              flex items-center justify-between p-5
-              bg-white dark:bg-gray-800
-              border border-gray-200 dark:border-gray-700
-              rounded-xl shadow-sm dark:shadow-gray-900/30
-            "
+            className="border border-gray-200 dark:border-gray-700 shadow-sm"
           >
-            <div className="flex items-center gap-4 flex-1">
-              <Form onSubmit={handleToggle}>
+            <CardBody className="flex flex-row items-center justify-between p-5">
+              <div className="flex items-center gap-4 flex-1">
+                <Form onSubmit={handleToggle}>
+                  <input name="todoId" type="hidden" value={todo.id} />
+                  <input name="userId" type="hidden" value={userId} />
+                  <input
+                    name="completed"
+                    type="hidden"
+                    value={(!todo.completed).toString()}
+                  />
+                  <Checkbox
+                    lineThrough
+                    defaultSelected={todo.completed}
+                    onChange={(e) => {
+                      e.target.form?.requestSubmit();
+                    }}
+                  >
+                    <span
+                      className={clsx(
+                        "text-lg",
+                        todo.completed
+                          ? "text-gray-500 dark:text-gray-400"
+                          : "text-gray-900 dark:text-gray-100",
+                      )}
+                    >
+                      {todo.title}
+                    </span>
+                  </Checkbox>
+                </Form>
+              </div>
+
+              <Form onSubmit={handleDelete}>
                 <input name="todoId" type="hidden" value={todo.id} />
                 <input name="userId" type="hidden" value={userId} />
-                <input
-                  name="completed"
-                  type="hidden"
-                  value={(!todo.completed).toString()}
-                />
-                <Checkbox
-                  lineThrough
-                  defaultSelected={todo.completed}
-                  onChange={(e) => {
-                    e.target.form?.requestSubmit();
-                  }}
+                <Button
+                  className="text-red-600 dark:text-red-400 hover:text-red-800 dark:hover:text-red-300"
+                  color="danger"
+                  size="sm"
+                  type="submit"
+                  variant="ghost"
                 >
-                  <span
-                    className={clsx(
-                      "text-lg",
-                      todo.completed
-                        ? "text-gray-500 dark:text-gray-400"
-                        : "text-gray-900 dark:text-gray-100",
-                    )}
-                  >
-                    {todo.title}
-                  </span>
-                </Checkbox>
+                  delete
+                </Button>
               </Form>
-            </div>
-
-            <Form onSubmit={handleDelete}>
-              <input name="todoId" type="hidden" value={todo.id} />
-              <input name="userId" type="hidden" value={userId} />
-              <Button
-                className="text-red-600 dark:text-red-400 hover:text-red-800 dark:hover:text-red-300"
-                color="danger"
-                size="sm"
-                type="submit"
-                variant="light"
-              >
-                x
-              </Button>
-            </Form>
-          </li>
+            </CardBody>
+          </Card>
         ))}
       </ul>
 

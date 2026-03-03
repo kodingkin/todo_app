@@ -1,7 +1,6 @@
 "use server";
 
 import { redirect } from "next/navigation";
-import { revalidatePath } from "next/cache";
 
 import { prisma } from "@/lib/prisma";
 
@@ -57,27 +56,20 @@ export async function createTodo(formData: FormData) {
   await prisma.todo.create({
     data: { title: title.trim(), completed: false, userId },
   });
-
-  revalidatePath(`/list/${userId}`);
 }
 
 export async function toggleTodo(formData: FormData) {
   const todoId = formData.get("todoId") as string;
-  const userId = formData.get("userId") as string;
   const completed = formData.get("completed") === "true";
 
   await prisma.todo.update({
     where: { id: todoId },
     data: { completed: !completed },
   });
-
-  revalidatePath(`/list/${userId}`);
 }
 
 export async function deleteTodo(formData: FormData) {
   const todoId = formData.get("todoId") as string;
-  const userId = formData.get("userId") as string;
 
   await prisma.todo.delete({ where: { id: todoId } });
-  revalidatePath(`/list/${userId}`);
 }
