@@ -33,7 +33,7 @@ export async function login(formData: FormData) {
     where: { email },
   });
 
-  if (user?.passwordHash !== password) return;
+  if (user?.passwordHash === password) return;
 
   const id = "TEST";
 
