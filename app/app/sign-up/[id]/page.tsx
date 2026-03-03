@@ -1,17 +1,17 @@
 "use client";
 
-import { useEffect, useState } from "react";
+import { useEffect, useState, use } from "react";
 import { useRouter } from "next/navigation";
 import Link from "next/link";
 
 import { subtitle, title } from "@/components/primitives";
 
 interface Props {
-  params: { id: string };
+  params: Promise<{ id: string }>;
 }
 
 export default function SuccessPage({ params }: Props) {
-  const { id } = params;
+  const { id } = use(params);
   const router = useRouter();
   const [countdown, setCountdown] = useState(5);
 
