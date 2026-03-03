@@ -8,7 +8,6 @@ import { login } from "@/lib/serverFunctions";
 
 export default function DocsPage() {
   const [password, setPassword] = useState("");
-  const [submitted, setSubmitted] = useState<FormDataType | null>(null);
   const [errors, setErrors] = useState<
     Partial<Record<keyof FormDataType, string>>
   >({});
@@ -21,7 +20,6 @@ export default function DocsPage() {
     e.preventDefault();
     const formData = new FormData(e.currentTarget);
 
-    // Clear errors and submit
     setErrors({});
     login(formData);
   };
@@ -32,7 +30,6 @@ export default function DocsPage() {
       <Form
         className="w-full justify-center items-center space-y-4"
         validationErrors={errors}
-        onReset={() => setSubmitted(null)}
         onSubmit={onSubmit}
       >
         <div className="flex flex-col gap-4 max-w-md">

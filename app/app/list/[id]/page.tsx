@@ -1,35 +1,75 @@
 "use client";
 
 import { Form, Input, Button, Checkbox } from "@heroui/react";
-import { useFormStatus } from "react-dom";
-import { createTodo, toggleTodo, deleteTodo, findTodo } from "@/lib/serverFunctions";
-import { useState, useEffect } from "react";
+import { useState, useEffect, use, FormEvent } from "react";
+import clsx from "clsx";
+
+import {
+  createTodo,
+  toggleTodo,
+  deleteTodo,
+  findTodo,
+} from "@/lib/serverFunctions";
+import { title } from "@/components/primitives";
+import { AddButton } from "@/components/addButton";
 
 interface Props {
-  params: { id: string };
+  params: Promise<{ id: string }>;
 }
 
 export default function TodosPage({ params }: Props) {
-  const userId = params.id;
+  const userId = use(params).id;
   const [todos, setTodos] = useState<any[]>([]);
 
   useEffect(() => {
     findTodo(userId).then(setTodos);
   }, [userId]);
 
-  return (
-    <div className="max-w-2xl mx-auto py-12 px-4">
-      <h1 className="text-3xl font-bold mb-8">My Todos</h1>
+  async function handleCreate(e: FormEvent<HTMLFormElement>) {
+    e.preventDefault();
+    const formData = new FormData(e.currentTarget);
 
-      <Form action={createTodo} className="flex gap-3 mb-12">
-        <input type="hidden" name="userId" value={userId} />
+    try {
+      await createTodo(formData);
+      const updated = await findTodo(userId);
+
+      setTodos(updated);
+    } catch {}
+  }
+
+  async function handleToggle(e: FormEvent<HTMLFormElement>) {
+    e.preventDefault();
+    const formData = new FormData(e.currentTarget);
+
+    await toggleTodo(formData);
+    const updated = await findTodo(userId);
+
+    setTodos(updated);
+  }
+
+  async function handleDelete(e: FormEvent<HTMLFormElement>) {
+    e.preventDefault();
+    const formData = new FormData(e.currentTarget);
+
+    await deleteTodo(formData);
+    const updated = await findTodo(userId);
+
+    setTodos(updated);
+  }
+
+  return (
+    <div className="w-full mx-auto py-12 px-4">
+      <h1 className={title({ size: "sm" })}>My Todos</h1>
+
+      <Form className="flex gap-3 flex-row my-12" onSubmit={handleCreate}>
+        <input name="userId" type="hidden" value={userId} />
         <Input
+          isRequired
+          className="flex-1"
           name="title"
           placeholder="What needs to be done?"
-          className="flex-1"
-          isRequired
-          validationBehavior="native"
           size="lg"
+          validationBehavior="native"
         />
         <AddButton />
       </Form>
@@ -38,24 +78,54 @@ export default function TodosPage({ params }: Props) {
         {todos.map((todo) => (
           <li
             key={todo.id}
-            className="flex items-center justify-between p-5 bg-white border rounded-xl shadow-sm"
+            className="
+              flex items-center justify-between p-5
+              bg-white dark:bg-gray-800
+              border border-gray-200 dark:border-gray-700
+              rounded-xl shadow-sm dark:shadow-gray-900/30
+            "
           >
             <div className="flex items-center gap-4 flex-1">
-              <Form action={toggleTodo}>
-                <input type="hidden" name="todoId" value={todo.id} />
-                <input type="hidden" name="userId" value={userId} />
-                <Checkbox defaultSelected={todo.completed} />
-                <span className={todo.completed ? "line-through text-gray-500" : ""}>
-                  {todo.title}
-                </span>
+              <Form onSubmit={handleToggle}>
+                <input name="todoId" type="hidden" value={todo.id} />
+                <input name="userId" type="hidden" value={userId} />
+                <input
+                  name="completed"
+                  type="hidden"
+                  value={(!todo.completed).toString()}
+                />
+                <Checkbox
+                  lineThrough
+                  defaultSelected={todo.completed}
+                  onChange={(e) => {
+                    e.target.form?.requestSubmit();
+                  }}
+                >
+                  <span
+                    className={clsx(
+                      "text-lg",
+                      todo.completed
+                        ? "text-gray-500 dark:text-gray-400"
+                        : "text-gray-900 dark:text-gray-100",
+                    )}
+                  >
+                    {todo.title}
+                  </span>
+                </Checkbox>
               </Form>
             </div>
 
-            <Form action={deleteTodo}>
-              <input type="hidden" name="todoId" value={todo.id} />
-              <input type="hidden" name="userId" value={userId} />
-              <Button type="submit" color="danger" variant="light" size="sm">
-                Delete
+            <Form onSubmit={handleDelete}>
+              <input name="todoId" type="hidden" value={todo.id} />
+              <input name="userId" type="hidden" value={userId} />
+              <Button
+                className="text-red-600 dark:text-red-400 hover:text-red-800 dark:hover:text-red-300"
+                color="danger"
+                size="sm"
+                type="submit"
+                variant="light"
+              >
+                x
               </Button>
             </Form>
           </li>
@@ -68,21 +138,5 @@ export default function TodosPage({ params }: Props) {
         </p>
       )}
     </div>
-  );
-}
-
-// Loading button
-function AddButton() {
-  const { pending } = useFormStatus();
-  return (
-    <Button
-      type="submit"
-      color="primary"
-      size="lg"
-      isDisabled={pending}
-      className="min-w-[110px]"
-    >
-      {pending ? "Adding..." : "Add"}
-    </Button>
   );
 }

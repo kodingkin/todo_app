@@ -9,21 +9,22 @@ import { createUser, FormDataType } from "@/lib/serverFunctions";
 export default function DocsPage() {
   const [password, setPassword] = useState("");
   const [confirmPassword, setConfirmPassword] = useState("");
-  const [submitted, setSubmitted] = useState<FormDataType | null>(null);
   const [errors, setErrors] = useState<
     Partial<Record<keyof FormDataType, string>>
   >({});
 
   const formChecking = (data: FormDataType) => {
-      const newErrors: Partial<Record<keyof FormDataType, string>> = {};
-      if (data.password !== data.confirmPassword) {
-        newErrors.confirmPassword = "Seems you enter different password here";
-      }
-      if (data.terms !== "true") {
-        newErrors.terms = "Please accept the terms"
-      }
-      return newErrors;
-  }
+    const newErrors: Partial<Record<keyof FormDataType, string>> = {};
+
+    if (data.password !== data.confirmPassword) {
+      newErrors.confirmPassword = "Seems you enter different password here";
+    }
+    if (data.terms !== "true") {
+      newErrors.terms = "Please accept the terms";
+    }
+
+    return newErrors;
+  };
 
   const onSubmit = async (e: FormEvent<HTMLFormElement>) => {
     e.preventDefault();
@@ -59,7 +60,6 @@ export default function DocsPage() {
       <Form
         className="w-full justify-center items-center space-y-4"
         validationErrors={errors}
-        onReset={() => setSubmitted(null)}
         onSubmit={onSubmit}
       >
         <div className="flex flex-col gap-4 max-w-md">
@@ -104,12 +104,13 @@ export default function DocsPage() {
               if (validationDetails.tooShort) {
                 return "Password must be 8 characters or more";
               }
+
               return errors.password;
             }}
             label="Password"
             labelPlacement="outside"
-            name="password"
             minLength={8}
+            name="password"
             placeholder="Enter your password"
             type="password"
             value={password}
@@ -122,6 +123,7 @@ export default function DocsPage() {
               if (validationDetails.valueMissing) {
                 return "Please enter your password again";
               }
+
               return errors.confirmPassword;
             }}
             label="Confirm Password"

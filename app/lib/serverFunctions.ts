@@ -1,7 +1,8 @@
-"use server"
+"use server";
 
 import { redirect } from "next/navigation";
 import { revalidatePath } from "next/cache";
+
 import { prisma } from "@/lib/prisma";
 
 export interface FormDataType {
@@ -30,8 +31,10 @@ export async function login(formData: FormData) {
   const password = formData.get("password") as string;
 
   const user = await prisma.user.findFirst({
-    where: { email }
-  })
+    where: { email },
+  });
+
+  if (user?.passwordHash !== password) return;
 
   const id = "TEST";
 
@@ -39,10 +42,10 @@ export async function login(formData: FormData) {
 }
 
 export async function findTodo(userId: string) {
-    return await prisma.todo.findMany({
-      where: { userId },
-      orderBy: { createdAt: "desc" },
-    });
+  return await prisma.todo.findMany({
+    where: { userId },
+    orderBy: { createdAt: "desc" },
+  });
 }
 
 export async function createTodo(formData: FormData) {

@@ -2,6 +2,8 @@
 
 import { useEffect, useState } from "react";
 import { useRouter } from "next/navigation";
+import Link from "next/link";
+
 import { subtitle, title } from "@/components/primitives";
 
 interface Props {
@@ -9,13 +11,14 @@ interface Props {
 }
 
 export default function SuccessPage({ params }: Props) {
-  const { id } =  params;
+  const { id } = params;
   const router = useRouter();
   const [countdown, setCountdown] = useState(5);
 
   useEffect(() => {
     if (countdown <= 0) {
       router.push(`/list/${id}`);
+
       return;
     }
 
@@ -39,9 +42,12 @@ export default function SuccessPage({ params }: Props) {
 
       <p className="text-sm text-gray-500">
         Not redirected?{" "}
-        <a href="/list" className="text-blue-600 underline hover:text-blue-800">
+        <Link
+          className="text-blue-600 underline hover:text-blue-800"
+          href="/list"
+        >
           Click here
-        </a>
+        </Link>
       </p>
     </div>
   );
