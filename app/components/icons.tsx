@@ -185,3 +185,42 @@ export const SearchIcon = (props: IconSvgProps) => (
     />
   </svg>
 );
+
+export const AvatarIcon: React.FC<IconSvgProps> = ({
+  size = 24,
+  width,
+  height,
+  ...props
+}) => {
+  return (
+    <svg
+      height={size || height}
+      viewBox="0 0 24 24"
+      width={size || width}
+      {...props}
+    >
+      <g>
+        <g>
+          <path
+            clipRule="evenodd"
+            d="M19.2 17.088V17.76c0 0.792 -0.648 1.44 -1.44 1.44H6.24c-0.792 0 -1.44 -0.648 -1.44 -1.44v-0.672c0 -1.752 2.04 -2.808 3.96 -3.648 0.072 -0.024 0.12 -0.048 0.192 -0.096 0.144 -0.072 0.312 -0.072 0.456 0.024C10.176 13.872 11.064 14.16 12 14.16s1.824 -0.288 2.592 -0.768c0.144 -0.096 0.312 -0.096 0.456 -0.024 0.072 0.024 0.12 0.048 0.192 0.096 1.92 0.816 3.96 1.872 3.96 3.624"
+            fill="currentColor"
+            fillRule="evenodd"
+          />
+        </g>
+        <g>
+          <path
+            clipRule="evenodd"
+            cx="50"
+            cy="36.5"
+            d="M15.576 8.76A3.576 3.96 0 0 1 12 12.72A3.576 3.96 0 0 1 8.424 8.76A3.576 3.96 0 0 1 15.576 8.76z"
+            fill="currentColor"
+            fillRule="evenodd"
+            rx="14.9"
+            ry="16.5"
+          />
+        </g>
+      </g>
+    </svg>
+  );
+};
