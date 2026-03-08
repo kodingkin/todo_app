@@ -1,8 +1,7 @@
 "use client";
 
-import { Card, CardBody, Form, Input, Button, Checkbox } from "@heroui/react";
+import { Form, Input } from "@heroui/react";
 import { useState, useEffect, use, FormEvent, useRef } from "react";
-import clsx from "clsx";
 
 import {
   createTodo,
@@ -12,6 +11,8 @@ import {
 } from "@/lib/serverFunctions";
 import { title } from "@/components/primitives";
 import { AddButton } from "@/components/addButton";
+import TodoCard from "@/components/todoCard";
+import { Todo } from "@/lib/generated/prisma/client";
 
 interface Props {
   params: Promise<{ id: string }>;
@@ -19,7 +20,7 @@ interface Props {
 
 export default function TodosPage({ params }: Props) {
   const userId = use(params).id;
-  const [todos, setTodos] = useState<any[]>([]);
+  const [todos, setTodos] = useState<Todo[]>([]);
   const formRef = useRef<HTMLFormElement>(null);
 
   useEffect(() => {
@@ -83,56 +84,13 @@ export default function TodosPage({ params }: Props) {
 
       <ul className="space-y-4">
         {todos.map((todo) => (
-          <Card
+          <TodoCard
             key={todo.id}
-            className="border border-gray-200 dark:border-gray-700 shadow-sm"
-          >
-            <CardBody className="flex flex-row items-center justify-between p-5">
-              <div className="flex items-center gap-4 flex-1">
-                <Form onSubmit={handleToggle}>
-                  <input name="todoId" type="hidden" value={todo.id} />
-                  <input name="userId" type="hidden" value={userId} />
-                  <input
-                    name="completed"
-                    type="hidden"
-                    value={(!todo.completed).toString()}
-                  />
-                  <Checkbox
-                    lineThrough
-                    defaultSelected={todo.completed}
-                    onChange={(e) => {
-                      e.target.form?.requestSubmit();
-                    }}
-                  >
-                    <span
-                      className={clsx(
-                        "text-lg",
-                        todo.completed
-                          ? "text-gray-500 dark:text-gray-400"
-                          : "text-gray-900 dark:text-gray-100",
-                      )}
-                    >
-                      {todo.title}
-                    </span>
-                  </Checkbox>
-                </Form>
-              </div>
-
-              <Form onSubmit={handleDelete}>
-                <input name="todoId" type="hidden" value={todo.id} />
-                <input name="userId" type="hidden" value={userId} />
-                <Button
-                  className="text-red-600 dark:text-red-400 hover:text-red-800 dark:hover:text-red-300"
-                  color="danger"
-                  size="sm"
-                  type="submit"
-                  variant="ghost"
-                >
-                  delete
-                </Button>
-              </Form>
-            </CardBody>
-          </Card>
+            handleDelete={handleDelete}
+            handleToggle={handleToggle}
+            todo={todo}
+            userId={userId}
+          />
         ))}
       </ul>
 

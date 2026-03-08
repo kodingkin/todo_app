@@ -1,8 +1,6 @@
-import { Link } from "@heroui/link";
-import { button as buttonStyles } from "@heroui/theme";
-
-import { siteConfig } from "@/config/site";
 import { title, subtitle } from "@/components/primitives";
+import SingupButton from "@/components/signupButton";
+import LoginButton from "@/components/logingButton";
 
 export default function Home() {
   return (
@@ -17,22 +15,8 @@ export default function Home() {
       </div>
 
       <div className="flex gap-3">
-        <Link
-          className={buttonStyles({
-            color: "primary",
-            radius: "full",
-            variant: "shadow",
-          })}
-          href={siteConfig.links.signUp}
-        >
-          Sign Up
-        </Link>
-        <Link
-          className={buttonStyles({ variant: "bordered", radius: "full" })}
-          href={siteConfig.links.login}
-        >
-          Login
-        </Link>
+        <SingupButton />
+        <LoginButton />
       </div>
     </div>
   );
