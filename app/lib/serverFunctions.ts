@@ -2,12 +2,13 @@
 
 import { redirect } from "next/navigation";
 
+import { Todo } from "./generated/prisma/client";
+
 import { prisma } from "@/lib/prisma";
 
 export interface FormDataType {
   name: string;
   password: string;
-  confirmPassword: string;
   terms: string;
 }
 
@@ -40,7 +41,7 @@ export async function login(formData: FormData) {
   redirect(`/list/${id}`);
 }
 
-export async function findTodo(userId: string) {
+export async function findTodo(userId: string): Promise<Todo[]> {
   return await prisma.todo.findMany({
     where: { userId },
     orderBy: { createdAt: "desc" },

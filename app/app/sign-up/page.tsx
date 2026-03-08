@@ -1,14 +1,13 @@
 "use client";
 
-import { Button, Form, Input, Checkbox, Link } from "@heroui/react";
+import { Button, Form, Checkbox, Link } from "@heroui/react";
 import { FormEvent, useState } from "react";
 
 import { title } from "@/components/primitives";
 import { createUser, FormDataType } from "@/lib/serverFunctions";
+import CustomizedInput from "@/components/input";
 
 export default function DocsPage() {
-  const [password, setPassword] = useState("");
-  const [confirmPassword, setConfirmPassword] = useState("");
   const [errors, setErrors] = useState<
     Partial<Record<keyof FormDataType, string>>
   >({});
@@ -16,9 +15,6 @@ export default function DocsPage() {
   const formChecking = (data: FormDataType) => {
     const newErrors: Partial<Record<keyof FormDataType, string>> = {};
 
-    if (data.password !== data.confirmPassword) {
-      newErrors.confirmPassword = "Seems you enter different password here";
-    }
     if (data.terms !== "true") {
       newErrors.terms = "Please accept the terms";
     }
@@ -39,7 +35,6 @@ export default function DocsPage() {
     const data: FormDataType = {
       name: getString("name"),
       password: getString("password"),
-      confirmPassword: getString("confirmPassword"),
       terms: getString("terms"),
     };
 
@@ -63,8 +58,7 @@ export default function DocsPage() {
         onSubmit={onSubmit}
       >
         <div className="flex flex-col gap-4 max-w-md">
-          <Input
-            isRequired
+          <CustomizedInput
             errorMessage={({ validationDetails }) => {
               if (validationDetails.valueMissing) {
                 return "Please enter your name";
@@ -73,13 +67,10 @@ export default function DocsPage() {
               return errors.name;
             }}
             label="Name"
-            labelPlacement="outside"
-            name="name"
             placeholder="Enter your name"
           />
 
-          <Input
-            isRequired
+          <CustomizedInput
             errorMessage={({ validationDetails }) => {
               if (validationDetails.valueMissing) {
                 return "Please enter your email";
@@ -89,14 +80,10 @@ export default function DocsPage() {
               }
             }}
             label="Email"
-            labelPlacement="outside"
-            name="email"
             placeholder="Enter your email"
-            type="email"
           />
 
-          <Input
-            isRequired
+          <CustomizedInput
             errorMessage={({ validationDetails }) => {
               if (validationDetails.valueMissing) {
                 return "Please enter your password";
@@ -108,32 +95,9 @@ export default function DocsPage() {
               return errors.password;
             }}
             label="Password"
-            labelPlacement="outside"
-            minLength={8}
-            name="password"
             placeholder="Enter your password"
-            type="password"
-            value={password}
-            onValueChange={setPassword}
           />
 
-          <Input
-            isRequired
-            errorMessage={({ validationDetails }) => {
-              if (validationDetails.valueMissing) {
-                return "Please enter your password again";
-              }
-
-              return errors.confirmPassword;
-            }}
-            label="Confirm Password"
-            labelPlacement="outside"
-            name="confirmPassword"
-            placeholder="Enter your password again"
-            type="password"
-            value={confirmPassword}
-            onValueChange={setConfirmPassword}
-          />
           <div className="flex gap-1">
             <Checkbox
               isRequired

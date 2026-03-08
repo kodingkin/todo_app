@@ -1,13 +1,13 @@
 "use client";
 
-import { Button, Form, Input } from "@heroui/react";
+import { Button, Form } from "@heroui/react";
 import { FormEvent, useState } from "react";
 
 import { title } from "@/components/primitives";
 import { login } from "@/lib/serverFunctions";
+import CustomizedInput from "@/components/input";
 
 export default function DocsPage() {
-  const [password, setPassword] = useState("");
   const [errors, setErrors] = useState<
     Partial<Record<keyof FormDataType, string>>
   >({});
@@ -33,8 +33,7 @@ export default function DocsPage() {
         onSubmit={onSubmit}
       >
         <div className="flex flex-col gap-4 max-w-md">
-          <Input
-            isRequired
+          <CustomizedInput
             errorMessage={({ validationDetails }) => {
               if (validationDetails.valueMissing) {
                 return "Please enter your email";
@@ -44,26 +43,17 @@ export default function DocsPage() {
               }
             }}
             label="Email"
-            labelPlacement="outside"
-            name="email"
             placeholder="Enter your email"
-            type="email"
           />
 
-          <Input
-            isRequired
+          <CustomizedInput
             errorMessage={({ validationDetails }) => {
               if (validationDetails.valueMissing) {
                 return "Please enter your password";
               }
             }}
             label="Password"
-            labelPlacement="outside"
-            name="password"
             placeholder="Enter your password"
-            type="password"
-            value={password}
-            onValueChange={setPassword}
           />
 
           <div className="flex gap-4">
